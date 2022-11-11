@@ -1,40 +1,51 @@
 import data from './data.txt'
+// import data from './data1.txt'
 import './App.css';
-
+import { useEffect, useState } from 'react';
+import Optioner from './option';
 function App() {
-  let Arr=[[],[],[],[],[]]
-  let Arr2=[]
-  const spliter=(sdata)=>{
-    let x=sdata.split('>')
-    sdata=x
-    return sdata
+  let [lineSubArray, setLineSubArray] = useState([])
+
+  const spliter = (text) => {
+    let x = text.split('>')
+    text = x.map(h => h.trim())
+    return text
   }
-  const app=()=>{
+  useEffect(() => {
     fetch(data)
-    .then(r=>r.text())
-    .then(text=>{
-      let sdata=text.split('\n')
-      sdata.map((x,i)=>
-        sdata[i]=spliter(x)
-      )
-      // let y={}
-      sdata.map((x,i)=>{
-        Arr[0].push(x[0])
+      .then(r => r.text())
+      .then(text => {
+        let newLine = text.split('\n')
+        newLine.map((x, i) => newLine[i] = spliter(x))
+        // newLine.map((x, i) => newLine[i] = Shorter(spliter(x)))
+        console.log("newLine", newLine)
+        setLineSubArray([...newLine])
+        // let aArr=[]
+        //         newLine.forEach(element => {
+        //           if(element.length==1){
+        // aArr.push(element)
+        //           }
+        //         });
+        // console.log(aArr)
       })
-      Arr[0] = [...new Set(Arr[0])];
-      Arr[0].map((y,j)=>{
-       let sub= sdata.map((x,i)=>(y===x[0])?Arr[j][1].push(x[1]):"")
-       
-      })
-    //  Arr2.map((x,i)=>{})
-      console.log(Arr)
-    })
+  }, [])
+
+  const Shorter = (arr, i = 0, data = {}, cnt = 0) => {
+    if (arr[i] == undefined)
+      return ''
+    data[arr[i]] = {}
+    Shorter(arr, i + 1, data[arr[i]])
+    return data
   }
+
+
   return (
     <div className="App" >
-    <button style={{width:"100px",height:"50px",fontSize:"35px"}} onClick={app}>Click</button>
+      {
+        lineSubArray.map(x => <p> {JSON.stringify(x)}</p>)
+
+      }
     </div>
   );
 }
-
 export default App;
